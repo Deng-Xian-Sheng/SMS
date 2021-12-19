@@ -80,9 +80,10 @@ func main() {
 	} else if YamlOut["code"] == "0" {
 		DatabaseInfo = map[string]string{"UserName": YamlOut["UserName"], "PassWd": YamlOut["PassWd"], "IP": YamlOut["IP"], "Port": YamlOut["Port"], "NameDB": YamlOut["NameDB"]}
 	}
-	out, err := database.Database(DatabaseInfo)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(out)
+	// out, err := database.Database(DatabaseInfo)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(out)
+
 }
