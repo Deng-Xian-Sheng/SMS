@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	// "fmt"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
-	"sms/database"
+	// "sms/database"
+	// "sms/controller"
+	"sms/service"
 )
 
 type DefaultYaml struct {
@@ -66,24 +68,31 @@ func GrabYaml() (map[string]string, error) {
 }
 
 func main() {
-	YamlOut, err := GrabYaml()
-	var DatabaseInfo map[string]string
-	if err != nil {
-		panic(YamlOut["data"] + "\n" + fmt.Sprint(err))
-	}
-	if YamlOut["code"] == "2" {
-		fmt.Println(YamlOut["data"])
-		os.Exit(0)
-	} else if YamlOut["code"] == "4" {
-		fmt.Println(YamlOut["data"])
-		os.Exit(1)
-	} else if YamlOut["code"] == "0" {
-		DatabaseInfo = map[string]string{"UserName": YamlOut["UserName"], "PassWd": YamlOut["PassWd"], "IP": YamlOut["IP"], "Port": YamlOut["Port"], "NameDB": YamlOut["NameDB"]}
-	}
+	// YamlOut, err := GrabYaml()
+	// var DatabaseInfo map[string]string
+	// if err != nil {
+	// 	panic(YamlOut["data"] + "\n" + fmt.Sprint(err))
+	// }
+	// if YamlOut["code"] == "2" {
+	// 	fmt.Println(YamlOut["data"])
+	// 	os.Exit(0)
+	// } else if YamlOut["code"] == "4" {
+	// 	fmt.Println(YamlOut["data"])
+	// 	os.Exit(1)
+	// } else if YamlOut["code"] == "0" {
+	// 	DatabaseInfo = map[string]string{"UserName": YamlOut["UserName"], "PassWd": YamlOut["PassWd"], "IP": YamlOut["IP"], "Port": YamlOut["Port"], "NameDB": YamlOut["NameDB"]}
+	// }
 	// out, err := database.Database(DatabaseInfo)
 	// if err != nil {
 	// 	panic(err)
 	// }
 	// fmt.Println(out)
 
+	// out,err := controller.Controller(DatabaseInfo,map[string]string{"sub":"aaa","obj":"ddd","act":"sss"})
+	// if err != nil{
+	// 	panic(err)
+	// }
+	// fmt.Println(out)
+
+	service.Service()
 }
