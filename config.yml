@@ -1,7 +1,9 @@
 database:
-    username: LikeWendy
-    passwd: LikeWendy
-    ip: 192.168.8.6
-    port: 3306
-    namedb: test
+    username: LikeWendy #数据库用户名
+    passwd: LikeWendy #数据库用户密码
+    ip: 192.168.8.6 #数据库远程连接IP
+    port: 3306 #数据库远程端口
+    namedb: test #数据库名
+service:
+    port: 8080 #HTTP服务端口
 

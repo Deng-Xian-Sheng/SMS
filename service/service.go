@@ -2,21 +2,26 @@ package service
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/tidwall/gjson"
+	"log"
 	// "net/http"
 	"fmt"
+	// "sms/database"
+	// "sms/controller"
 )
 
-func Service() {
+func Service(ServiceInfo, DatabaseInfo map[string]string){
 	router := gin.Default()
-
-	router.POST("/post", func(c *gin.Context) {
-
-		id := c.Query("id")
-		page := c.DefaultQuery("page", "0")
-		name := c.PostForm("name")
-		message := c.PostForm("message")
-
-		fmt.Printf("id: %s; page: %s; name: %s; message: %s", id, page, name, message)
+	router.POST("/Register", func(c *gin.Context) {
+		 // 获取原始字节
+		 d, err := c.GetRawData()
+		 if err != nil{
+			log.Printf(fmt.Sprint(err))
+		 }
+		Name := gjson.Get(string(d),"name").Str
+		Passwd := gjson.Get(string(d),"passwd").Str
+		NickName := gjson.Get(string(d),"nickName").Str
+		fmt.Println(Name,Passwd,NickName)
 	})
-	router.Run(":8080")
+	router.Run(":" + ServiceInfo["Port"])
 }

@@ -2,12 +2,10 @@ package main
 
 import (
 	"bufio"
-	// "fmt"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
-	// "sms/database"
-	// "sms/controller"
 	"sms/service"
 )
 
@@ -18,6 +16,9 @@ type DefaultYaml struct {
 		IP       string
 		Port     string
 		NameDB   string
+	}
+	Service struct{
+		Port	string
 	}
 }
 
@@ -31,6 +32,8 @@ func GrabYaml() (map[string]string, error) {
     ip: #数据库远程连接IP
     port: #数据库远程端口
     namedb: #数据库名
+service:
+    port: #HTTP服务端口
 `
 		CreateFile, err := os.OpenFile(FilePath, os.O_RDWR|os.O_CREATE, os.ModeAppend|os.ModePerm)
 		if err != nil {
@@ -61,38 +64,28 @@ func GrabYaml() (map[string]string, error) {
 	if err != nil {
 		return map[string]string{"code": "3", "data": "配置文件内容有误，无法解析配置文件"}, err
 	}
-	if defaultYaml.Database.UserName == "" || defaultYaml.Database.PassWd == "" || defaultYaml.Database.IP == "" || defaultYaml.Database.Port == "" || defaultYaml.Database.NameDB == "" {
+	if defaultYaml.Database.UserName == "" || defaultYaml.Database.PassWd == "" || defaultYaml.Database.IP == "" || defaultYaml.Database.Port == "" || defaultYaml.Database.NameDB == "" || defaultYaml.Service.Port == ""{
 		return map[string]string{"code": "4", "data": "配置文件必填项不能为空"}, nil
 	}
-	return map[string]string{"code": "0", "UserName": defaultYaml.Database.UserName, "PassWd": defaultYaml.Database.PassWd, "IP": defaultYaml.Database.IP, "Port": defaultYaml.Database.Port, "NameDB": defaultYaml.Database.NameDB}, nil
+	return map[string]string{"code": "0", "DatabaseUserName": defaultYaml.Database.UserName, "DatabasePassWd": defaultYaml.Database.PassWd, "DatabaseIP": defaultYaml.Database.IP, "DatabasePort": defaultYaml.Database.Port, "DatabaseNameDB": defaultYaml.Database.NameDB,"ServicePort":defaultYaml.Service.Port}, nil
 }
 
 func main() {
-	// YamlOut, err := GrabYaml()
-	// var DatabaseInfo map[string]string
-	// if err != nil {
-	// 	panic(YamlOut["data"] + "\n" + fmt.Sprint(err))
-	// }
-	// if YamlOut["code"] == "2" {
-	// 	fmt.Println(YamlOut["data"])
-	// 	os.Exit(0)
-	// } else if YamlOut["code"] == "4" {
-	// 	fmt.Println(YamlOut["data"])
-	// 	os.Exit(1)
-	// } else if YamlOut["code"] == "0" {
-	// 	DatabaseInfo = map[string]string{"UserName": YamlOut["UserName"], "PassWd": YamlOut["PassWd"], "IP": YamlOut["IP"], "Port": YamlOut["Port"], "NameDB": YamlOut["NameDB"]}
-	// }
-	// out, err := database.Database(DatabaseInfo)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(out)
-
-	// out,err := controller.Controller(DatabaseInfo,map[string]string{"sub":"aaa","obj":"ddd","act":"sss"})
-	// if err != nil{
-	// 	panic(err)
-	// }
-	// fmt.Println(out)
-
-	service.Service()
+	YamlOut, err := GrabYaml()
+	var DatabaseInfo map[string]string
+	var ServiceInfo map[string]string
+	if err != nil {
+		panic(YamlOut["data"] + "\n" + fmt.Sprint(err))
+	}
+	if YamlOut["code"] == "2" {
+		fmt.Println(YamlOut["data"])
+		os.Exit(0)
+	} else if YamlOut["code"] == "4" {
+		fmt.Println(YamlOut["data"])
+		os.Exit(1)
+	} else if YamlOut["code"] == "0" {
+		DatabaseInfo = map[string]string{"UserName": YamlOut["DatabaseUserName"], "PassWd": YamlOut["DatabasePassWd"], "IP": YamlOut["DatabaseIP"], "Port": YamlOut["DatabasePort"], "NameDB": YamlOut["DatabaseNameDB"]}
+		ServiceInfo = map[string]string{"Port":YamlOut["ServicePort"]}
+	}
+	service.Service(ServiceInfo,DatabaseInfo)
 }

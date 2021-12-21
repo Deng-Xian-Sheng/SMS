@@ -126,11 +126,11 @@ func LinkDatabase(DatabaseInfo map[string]string) (*gorm.DB, error) {
 	return db, nil
 }
 
-// func Database(DatabaseInfo map[string]string) (map[string]string, error) {
-// 	db, err := LinkDatabase(DatabaseInfo)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func Database(DatabaseInfo map[string]string) (map[string]string, error) {
+	_, err := LinkDatabase(DatabaseInfo)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return map[string]string{}, nil
-// }
+	return map[string]string{}, nil
+}
