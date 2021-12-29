@@ -7,19 +7,15 @@
             <a href="/" target="_blank">
               <el-col :span="2" :push="10">
                 <div class="grid-content bg-purple">
-                  <div class="demo-image">
-                    <div class="block">
-                      <el-image
-                        style="width: 50px; height: 50px;margin-top: 5px;"
-                        :src="url"
-                        :fit="fit"
-                      >
-                        <div slot="error" class="image-slot">
-                          <i class="el-icon-picture-outline"></i>
-                        </div>
-                      </el-image>
+                  <el-image
+                    style="width: 50px; height: 50px;margin-top: 5px;"
+                    :src="url"
+                    :fit="fit"
+                  >
+                    <div slot="error" class="image-slot">
+                      <i class="el-icon-picture-outline"></i>
                     </div>
-                  </div>
+                  </el-image>
                 </div>
               </el-col>
             </a>
@@ -37,7 +33,7 @@
         <div class="grid-content bg-purple-light">
           <el-menu
             :default-active="activeIndex"
-            class="el-menu-demo"
+            class="el-menu"
             mode="horizontal"
             background-color="#d2e8ff"
             @select="handleSelect"
@@ -52,14 +48,14 @@
       </el-col>
       <el-col :span="6">
         <div class="grid-content bg-purple">
-          <el-button type="text" @click="centerDialogVisible = true">注册/登录</el-button>
+          <el-button type="text" @click="loginDialogVisible = true">注册/登录</el-button>
         </div>
       </el-col>
     </el-row>
     <el-dialog
       title="登录"
-      :visible.sync="centerDialogVisible"
-      width="40%"
+      :visible.sync="loginDialogVisible"
+      width="30%"
       center
       :destroy-on-close="true"
       custom-class="RegisterLogin"
@@ -70,7 +66,7 @@
         </el-col>
         <el-col :span="20">
           <div class="grid-content bg-purple-light">
-            <el-input placeholder="请输入用户名" v-model="inputName" clearable></el-input>
+            <el-input placeholder="请输入用户名&邮箱" v-model="inputName" clearable></el-input>
           </div>
         </el-col>
       </el-row>
@@ -84,29 +80,43 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12" :offset="4">
+      <el-row>
+        <el-col :span="4">
           <div class="grid-content bg-purple">
-            <slide-verify
-              ref="slideblock"
-              @again="onAgain"
-              @fulfilled="onFulfilled"
-              @success="onSuccess"
-              @fail="onFail"
-              @refresh="onRefresh"
-              :slider-text="verificationCodeTips"
-              :accuracy="accuracy"
-              :imgs="slideblockImgs"
-            ></slide-verify>
+            <el-link :underline="false" icon="el-icon-refresh">换一换</el-link>
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content bg-purple">
+            <el-input placeholder="请输入人机验证码" v-model="inputManMachineVerificationCode" clearable></el-input>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-image
+              style="width: 80px; height: 40px;margin-top: 8px;"
+              :src="urlManMachineVerificationCode"
+              :fit="fitManMachineVerificationCode"
+            >
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="40">
+      <el-row :gutter="0">
         <el-col :span="12" :offset="9">
           <div class="grid-content bg-purple">
-            <el-button type="text" @click="centerDialogVisible = false;RegisterDialogVisible = true" >注册</el-button>
+            <el-button
+              type="text"
+              @click="loginDialogVisible = false;orgetPasswdDialogVisible=false;RegisterDialogVisible = true"
+            >注册</el-button>
             <span>/</span>
-            <el-button type="text">忘记密码</el-button>
+            <el-button
+              type="text"
+              @click="loginDialogVisible = false;RegisterDialogVisible = false;forgetPasswdDialogVisible=true;forgetPasswdTips()"
+            >忘记密码</el-button>
           </div>
         </el-col>
       </el-row>
@@ -117,7 +127,7 @@
     <el-dialog
       title="注册"
       :visible.sync="RegisterDialogVisible"
-      width="40%"
+      width="30%"
       center
       :destroy-on-close="true"
       custom-class="RegisterLogin"
@@ -142,34 +152,184 @@
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12" :offset="4">
+      <el-row>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">邮箱：</div>
+        </el-col>
+        <el-col :span="20">
           <div class="grid-content bg-purple">
-            <slide-verify
-              ref="slideblock"
-              @again="onAgain"
-              @fulfilled="onFulfilled"
-              @success="onSuccess"
-              @fail="onFail"
-              @refresh="onRefresh"
-              :slider-text="verificationCodeTips"
-              :accuracy="accuracy"
-              :imgs="slideblockImgs"
-            ></slide-verify>
+            <el-input
+              placeholder="请输入邮箱"
+              v-model="inputMailbox"
+              clearable
+              suffix-icon="el-icon-message"
+            ></el-input>
           </div>
         </el-col>
       </el-row>
-      <el-row :gutter="40">
+      <el-row>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-link :underline="false" icon="el-icon-refresh">换一换</el-link>
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content bg-purple">
+            <el-input placeholder="请输入人机验证码" v-model="inputManMachineVerificationCode" clearable></el-input>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-image
+              style="width: 80px; height: 40px;margin-top: 8px;"
+              :src="urlManMachineVerificationCode"
+              :fit="fitManMachineVerificationCode"
+            >
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">邮箱验证码：</div>
+        </el-col>
+        <el-col :span="14">
+          <div class="grid-content bg-purple">
+            <el-input placeholder="请输入邮箱验证码" v-model="inputMailboxVerification" clearable></el-input>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-button size="small" round>获取</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="0">
         <el-col :span="12" :offset="9">
           <div class="grid-content bg-purple">
-            <el-button type="text" @click="RegisterDialogVisible = false;centerDialogVisible = true">登录</el-button>
+            <el-button
+              type="text"
+              @click="RegisterDialogVisible = false;forgetPasswdDialogVisible=false;loginDialogVisible = true"
+            >登录</el-button>
             <span>/</span>
-            <el-button type="text">忘记密码</el-button>
+            <el-button
+              type="text"
+              @click="loginDialogVisible = false;RegisterDialogVisible = false;forgetPasswdDialogVisible=true;forgetPasswdTips()"
+            >忘记密码</el-button>
           </div>
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary">马上注册</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="忘记密码"
+      :visible.sync="forgetPasswdDialogVisible"
+      width="30%"
+      center
+      :destroy-on-close="true"
+      custom-class="RegisterLogin"
+    >
+      <el-row>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">邮箱：</div>
+        </el-col>
+        <el-col :span="20">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入邮箱"
+              v-model="inputForgetPasswdMailbox"
+              clearable
+              suffix-icon="el-icon-message"
+            ></el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-link :underline="false" icon="el-icon-refresh">换一换</el-link>
+          </div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content bg-purple">
+            <el-input placeholder="请输入人机验证码" v-model="inputManMachineVerificationCode" clearable></el-input>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-image
+              style="width: 80px; height: 40px;margin-top: 8px;"
+              :src="urlManMachineVerificationCode"
+              :fit="fitManMachineVerificationCode"
+            >
+              <div slot="error" class="image-slot">
+                <i class="el-icon-picture-outline"></i>
+              </div>
+            </el-image>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="6">
+          <div class="grid-content bg-purple">邮箱验证码：</div>
+        </el-col>
+        <el-col :span="14">
+          <div class="grid-content bg-purple">
+            <el-input
+              placeholder="请输入邮箱验证码"
+              v-model="inputForgetPasswdMailboxVerification"
+              clearable
+            ></el-input>
+          </div>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">
+            <el-button size="small" round>获取</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="4">
+          <div class="grid-content bg-purple">新密码：</div>
+        </el-col>
+        <el-col :span="20">
+          <div class="grid-content bg-purple-light">
+            <el-input placeholder="请输入新密码" v-model="inputNewPasswd" show-password></el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="8">
+          <div class="grid-content bg-purple">再次输入新密码：</div>
+        </el-col>
+        <el-col :span="16">
+          <div class="grid-content bg-purple-light">
+            <el-input placeholder="请再次输入新密码" v-model="inputNewPasswd2" show-password></el-input>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row :gutter="0">
+        <el-col :span="12" :offset="9">
+          <div class="grid-content bg-purple">
+            <el-button
+              type="text"
+              @click="loginDialogVisible = false;forgetPasswdDialogVisible=false;RegisterDialogVisible = true"
+            >注册</el-button>
+            <span>/</span>
+            <el-button
+              type="text"
+              @click="RegisterDialogVisible = false;forgetPasswdDialogVisible=false;loginDialogVisible = true"
+            >登录</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确认更新密码</el-button>
       </span>
     </el-dialog>
   </div>
@@ -183,48 +343,22 @@ export default {
       activeIndex: "1",
       fit: "cover",
       url: "/favicon.png",
-      centerDialogVisible: false,
+      loginDialogVisible: false,
       inputName: "",
       inputPasswd: "",
-      verificationCodeStatus: "",
-      verificationCodeTips: "向右滑动->",
-      // 精确度小，可允许的误差范围小；为1时，则表示滑块要与凹槽完全重叠，才能验证成功。默认值为5
-      accuracy: 1,
-      slideblockImgs: [
-        "/image/VerificationCodeImage/1023-310x155.jpg",
-        "/image/VerificationCodeImage/32-310x155.jpg",
-        "/image/VerificationCodeImage/433-310x155.jpg",
-        "/image/VerificationCodeImage/622-310x155.jpg",
-        "/image/VerificationCodeImage/87-310x155.jpg",
-        "/image/VerificationCodeImage/1072-310x155.jpg",
-        "/image/VerificationCodeImage/334-310x155.jpg",
-        "/image/VerificationCodeImage/503-310x155.jpg",
-        "/image/VerificationCodeImage/691-310x155.jpg",
-        "/image/VerificationCodeImage/931-310x155.jpg",
-        "/image/VerificationCodeImage/13-310x155.jpg",
-        "/image/VerificationCodeImage/342-310x155.jpg",
-        "/image/VerificationCodeImage/538-310x155.jpg",
-        "/image/VerificationCodeImage/701-310x155.jpg",
-        "/image/VerificationCodeImage/937-310x155.jpg",
-        "/image/VerificationCodeImage/145-310x155.jpg",
-        "/image/VerificationCodeImage/392-1-310x155.jpg",
-        "/image/VerificationCodeImage/554-310x155.jpg",
-        "/image/VerificationCodeImage/76-310x155.jpg",
-        "/image/VerificationCodeImage/943-310x155.jpg",
-        "/image/VerificationCodeImage/243-310x155.jpg",
-        "/image/VerificationCodeImage/392-310x155.jpg",
-        "/image/VerificationCodeImage/559-310x155.jpg",
-        "/image/VerificationCodeImage/820-310x155.jpg",
-        "/image/VerificationCodeImage/954-310x155.jpg",
-        "/image/VerificationCodeImage/272-310x155.jpg",
-        "/image/VerificationCodeImage/402-310x155.jpg",
-        "/image/VerificationCodeImage/575-310x155.jpg",
-        "/image/VerificationCodeImage/832-310x155.jpg",
-        "/image/VerificationCodeImage/988-310x155.jpg",
-      ],
       RegisterDialogVisible: false,
       inputNameRegister: "",
       inputPasswdRegister: "",
+      inputMailbox: "",
+      inputMailboxVerification: "",
+      inputManMachineVerificationCode: "",
+      urlManMachineVerificationCode: "/favicon.png",
+      fitManMachineVerificationCode: "cover",
+      forgetPasswdDialogVisible: false,
+      inputForgetPasswdMailbox: "",
+      inputForgetPasswdMailboxVerification: "",
+      inputNewPasswd: "",
+      inputNewPasswd2: "",
     };
   },
   methods: {
@@ -242,30 +376,14 @@ export default {
     TextLink: function () {
       window.open("/");
     },
-    onSuccess(times) {
-      console.log("验证通过，耗时" + times + "毫秒");
-      this.verificationCodeStatus =
-        "login success, 耗时${(times / 1000).toFixed(1)}s";
-    },
-    onFail() {
-      console.log("验证不通过");
-      this.verificationCodeStatus = "";
-    },
-    onRefresh() {
-      console.log("点击了刷新小图标");
-      this.verificationCodeStatus = "";
-    },
-    onFulfilled() {
-      console.log("刷新成功啦！");
-    },
-    onAgain() {
-      console.log("检测到非人为操作的哦！");
-      this.verificationCodeStatus = "try again";
-      // 刷新
-      this.$refs.slideblock.reset();
-    },
-    RefreshVerificationCode() {
-      this.$refs.slideblock.reset();
+    forgetPasswdTips() {
+      this.$alert(
+        "“忘记密码”功能仅支持“校长”角色，如您是其他角色请联系上级修改密码！",
+        "⚠️注意！",
+        {
+          confirmButtonText: "确定",
+        }
+      );
     },
   },
 };
