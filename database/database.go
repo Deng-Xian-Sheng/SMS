@@ -93,7 +93,8 @@ type School struct {
 type User struct {
 	ID       string `gorm:"type:varchar(191);primaryKey;comment:唯一标识"`
 	Name     string `gorm:"not null;unique;check:name <> '^[a-zA-Z0-9_-]{2,16}$';comment:用户名"`
-	Passwd   string `gorm:"comment:用户密码"`
+	Passwd   string `gorm:"not null;comment:用户密码"`
+	Mailbox  string `gorm:"unique;not null;comment:邮箱"`
 	NickName string `gorm:"check nickname <> '^{16}$';comment:昵称"`
 	RoleID   string `gorm:"not null;comment:外键"`
 	Model
@@ -132,5 +133,5 @@ func Database(DatabaseInfo map[string]string) (map[string]string, error) {
 		return nil, err
 	}
 
-	return map[string]string{}, nil
+	return nil, nil
 }

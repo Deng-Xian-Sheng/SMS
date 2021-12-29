@@ -17,8 +17,8 @@ type DefaultYaml struct {
 		Port     string
 		NameDB   string
 	}
-	Service struct{
-		Port	string
+	Service struct {
+		Port string
 	}
 }
 
@@ -64,10 +64,10 @@ service:
 	if err != nil {
 		return map[string]string{"code": "3", "data": "配置文件内容有误，无法解析配置文件"}, err
 	}
-	if defaultYaml.Database.UserName == "" || defaultYaml.Database.PassWd == "" || defaultYaml.Database.IP == "" || defaultYaml.Database.Port == "" || defaultYaml.Database.NameDB == "" || defaultYaml.Service.Port == ""{
+	if defaultYaml.Database.UserName == "" || defaultYaml.Database.PassWd == "" || defaultYaml.Database.IP == "" || defaultYaml.Database.Port == "" || defaultYaml.Database.NameDB == "" || defaultYaml.Service.Port == "" {
 		return map[string]string{"code": "4", "data": "配置文件必填项不能为空"}, nil
 	}
-	return map[string]string{"code": "0", "DatabaseUserName": defaultYaml.Database.UserName, "DatabasePassWd": defaultYaml.Database.PassWd, "DatabaseIP": defaultYaml.Database.IP, "DatabasePort": defaultYaml.Database.Port, "DatabaseNameDB": defaultYaml.Database.NameDB,"ServicePort":defaultYaml.Service.Port}, nil
+	return map[string]string{"code": "0", "DatabaseUserName": defaultYaml.Database.UserName, "DatabasePassWd": defaultYaml.Database.PassWd, "DatabaseIP": defaultYaml.Database.IP, "DatabasePort": defaultYaml.Database.Port, "DatabaseNameDB": defaultYaml.Database.NameDB, "ServicePort": defaultYaml.Service.Port}, nil
 }
 
 func main() {
@@ -85,7 +85,7 @@ func main() {
 		os.Exit(1)
 	} else if YamlOut["code"] == "0" {
 		DatabaseInfo = map[string]string{"UserName": YamlOut["DatabaseUserName"], "PassWd": YamlOut["DatabasePassWd"], "IP": YamlOut["DatabaseIP"], "Port": YamlOut["DatabasePort"], "NameDB": YamlOut["DatabaseNameDB"]}
-		ServiceInfo = map[string]string{"Port":YamlOut["ServicePort"]}
+		ServiceInfo = map[string]string{"Port": YamlOut["ServicePort"]}
 	}
-	service.Service(ServiceInfo,DatabaseInfo)
+	service.Service(ServiceInfo, DatabaseInfo)
 }
