@@ -5,9 +5,12 @@ Fight for love
 package database
 
 import (
+	"fmt"
+	"github.com/google/uuid"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"strconv"
 	"time"
 )
 
@@ -113,6 +116,12 @@ type Role struct {
 	Model
 }
 
+type Authentication struct {
+	ID     string `gorm:"type:varchar(191);primaryKey;comment:唯一标识"`
+	Jwtkey string `gorm:"not null;unique;comment:Jwt密钥"`
+	Model
+}
+
 func LinkDatabase(DatabaseInfo map[string]string) (*gorm.DB, error) {
 	dsn := DatabaseInfo["UserName"] + ":" + DatabaseInfo["PassWd"] + "@tcp(" + DatabaseInfo["IP"] + ":" + DatabaseInfo["Port"] + ")/" + DatabaseInfo["NameDB"] + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
@@ -123,8 +132,55 @@ func LinkDatabase(DatabaseInfo map[string]string) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	db.AutoMigrate(&School{}, &Grade{}, &Department{}, &Class{}, &Group{}, &Student{}, &Role{}, &User{})
+	db.AutoMigrate(&School{}, &Grade{}, &Department{}, &Class{}, &Group{}, &Student{}, &Role{}, &User{}, &Authentication{})
 	return db, nil
+}
+
+func CRUDAuthentication(DatabaseInfo map[string]string, OtherInfo map[string]string, Type string) (map[string]string, error) {
+	db, err := LinkDatabase(DatabaseInfo)
+	if err != nil {
+		return nil, err
+	}
+	if Type == "RJwtkey" {
+		var authentication Authentication
+		result := db.Select("ID", "Jwtkey").Limit(1).Find(&authentication)
+		// result.RowsAffected // 返回找到的记录数
+		// result.Error
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		return map[string]string{"ID": authentication.ID, "Jwtkey": authentication.Jwtkey, "RowsAffected": strconv.Itoa(int(result.RowsAffected))}, nil
+	}
+	if Type == "UJwtkey" {
+		out, err := CRUDAuthentication(DatabaseInfo, OtherInfo, "RJwtkey")
+		if err != nil {
+			return nil, err
+		}
+		if out["RowsAffected"] == "0" {
+			uuid, err := uuid.NewRandom()
+			if err != nil {
+				return nil, err
+			}
+			authentication := Authentication{ID: fmt.Sprint(uuid), Jwtkey: OtherInfo["NewJwtkey"]}
+			result := db.Select("ID", "Jwtkey").Create(&authentication)
+			if result.Error != nil {
+				return nil, err
+			}
+			return map[string]string{"RowsAffected": strconv.Itoa(int(result.RowsAffected))}, nil
+			// result.Error        // 返回 error
+			// result.RowsAffected // 返回插入记录的条数
+		}
+		var authentication Authentication
+		authentication.ID = out["ID"]
+		result := db.Model(&authentication).Select("Jwtkey").Updates(map[string]interface{}{"Jwtkey": OtherInfo["NewJwtkey"]})
+		// result.RowsAffected // 更新的记录数
+		// result.Error        // 更新的错误
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		return map[string]string{"RowsAffected": strconv.Itoa(int(result.RowsAffected))}, nil
+	}
+	return nil, nil
 }
 
 func Database(DatabaseInfo map[string]string) (map[string]string, error) {
