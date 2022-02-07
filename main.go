@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io"
 	"os"
 	"sms/service"
 )
@@ -49,14 +48,16 @@ service:
 	}
 	defer OsFile.Close()
 	//获取文件内容
-	FileReader := bufio.NewReader(OsFile)
+	FileScanner := bufio.NewScanner(OsFile)
 	var FileData string
-	for {
-		str, err := FileReader.ReadString('\n')
-		if err == io.EOF {
-			break
+	// 设置分词方式(按行读取)
+	FileScanner.Split(bufio.ScanLines)
+	for FileScanner.Scan(){
+		if FileData == "" {
+			FileData = FileData + FileScanner.Text()
+		} else {
+			FileData = FileData + "\n" + FileScanner.Text()
 		}
-		FileData += str
 	}
 
 	var defaultYaml DefaultYaml
